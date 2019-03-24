@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="author" content="Giulio Auriemma" />
+        <meta name="description" content="How to use SushiMenuJs.'">
+        <meta HTTP-EQUIV="keywords" content="HTMLMenu Menu WebMenu">
+        <meta charset="utf-8" />
+        <title>SushiMenuJs</title>
+        <!-- Jquery -->
+        <link href="https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel="stylesheet">
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <!-- Cloudfire -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+            crossorigin="anonymous"></script>
+        <!-- Bootstrap -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+            crossorigin="anonymous">
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+                crossorigin="anonymous"></script>
+        <!-- SushiMenu -->
+        <script src="scr/sushiMenu.js"></script>
+        <script src="scr/sushiMenuInput.js"></script>
+        <link rel="stylesheet" href="styles/index.min.css">
+
+        <script>
+            let menuGraph;
+            let isNopeChoice;
+            let bugsNum = 0;
+    
+            function buildMenu() {
+                // Build the menu.
+                menuGraph = new SM.Graph({ shouldSave: true, logError: true, layoutMap: myLayoutMap, playFirstAnimation: false});
+                menuGraph.addDataCallback(detectNope, true);
+                menuGraph.addDataCallback(countBugs, false);
+    
+                // Bind input
+                SM.input.bindInput(menuGraph, {
+                    back: [],           // No keyboard back
+                    select: [13],       // Enter
+                    down: [83, 40],     // S, DownArrow
+                    left: [65, 37],     // A, LeftArrow
+                    up: [87, 38],       // W, UpArrow
+                    right: [68, 39],    // D, RightArrow
+                });
+    
+                // Custom events
+                Array.from(document.getElementsByClassName('sm-item')).forEach( i => {
+                    // Called on activation.
+                    i.addEventListener('sm-activate', () => {
+                        if (i.parentElement.classList.contains('sm-item-container'))
+                            i.parentElement.style.backgroundColor = 'grey';
+                    });
+    
+                    // Called on deactivation.
+                    i.addEventListener('sm-deactivate', () => {
+                        if (i.parentElement.classList.contains('sm-item-container'))
+                            i.parentElement.style.backgroundColor = '';
+                    });
+                });
+            }
+    
+            /**
+            * The function used to choose the correct menu.
+            * 
+            * @param {string} menu The current menu id.
+            */
+            function myLayoutMap(menu) {
+                if (menu == 'bug-menu' && bugsNum >= 6)
+                    return 'right';
+
+                return isNopeChoice ? 'nope' : 'main';
+            }
+    
+            /**
+            * The functions called to configure data before the menu has changed (and the animations have been played).
+            *
+            * @param {HTMLElement} old The old menu.
+            * @param {HTMLElement} new The new menu.
+            * @returns {Boolean} False to prevent the menu changing to happen.
+            */
+            function detectNope(from, to) {
+                const activeElement = from.querySelector('.sm-active');
+                isNopeChoice = activeElement && activeElement.classList.contains('nope-item');
+                return true;
+            }
+
+            /**
+            * The functions called to configure data before the menu has changed (and the animations have been played).
+            *
+            * @param {HTMLElement} old The old menu.
+            * @param {HTMLElement} new The new menu.
+            * @returns {Boolean} False to prevent the menu changing to happen.
+            */
+            function countBugs(from, to) {
+                if (from.id == 'bug-menu') 
+                    ++bugsNum;
+                else if (from.id == 'sub-menu' && bugsNum >= 10)
+                    bugsNum = 3;
+            }
+
+            /**
+             * Animate the entering menu.
+             *
+             * @param {HTMLElement} from The exiting menu.
+             * @param {HTMLElement} to The entering menu.
+             * @param {Boolean} isBack true if is a back animation.
+             */
+            function standardInAnimation(from, to, isBack) {
+                // Enter the new menu.
+                $(to)
+                    .css('left', isBack ? '-100%' : '100%')
+                    .show()
+                    .animate({left: '0'}, { duration: 1000 });
+            }
+
+            /**
+             * Animate the exiting menu.
+             *
+             * @param {HTMLElement} from The exiting menu.
+             * @param {HTMLElement} to The entering menu.
+             * @param {Boolean} isBack true if is a back animation.
+             */
+            function standardOutAnimation(from, to, isBack) {
+                // Exit the current menu.
+                $(from)
+                    .animate({left: isBack ? '100%' : '-100%'}, { duration: 1000 }, () => $(from).hide());
+            }
+        </script>
+    </head>
+    <body onload="buildMenu()">
+        <div id="sm-viewport" class="h-100 w-100">
+            <!-- START -->
+            <div id="sm-main-menu" class="sm-menu container-fluid h-100" data-sm-out="standardOutAnimation" data-sm-in="standardInAnimation">
+                <header>
+                    Software's lifecycle
+                </header>
+                <div class="sm-layout sm-main-layout">
+                    <div class="row d-flex justify-content-center w-100">
+                        <div class="sm-item-container">
+                            <div class="sm-item" data-goto="development-menu">
+                                <h1>Start Developing</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- DEVELOPMENT -->
+            <div id="development-menu" class="sm-menu container-fluid h-100" data-sm-out="standardOutAnimation" data-sm-in="standardInAnimation">
+                <header>
+                    Development
+                </header>
+                <div class="sm-layout sm-main-layout">
+                    <div class="row d-flex justify-content-center w-100">
+                        <div class="sm-item-container">
+                            <div class="sm-item" data-goto="design-menu">
+                                <h1>Design a feature</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row d-flex justify-content-center w-100">
+                        <div class="sm-item-container">
+                            <div class="sm-item nope-item" data-goto="feature-menu">
+                                <h1>Develop a feature</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row d-flex justify-content-center w-100">
+                        <div class="sm-item-container">
+                            <div class="sm-item sm-redirect-blank-item" data-goto="https://media2.giphy.com/media/wmgsmee4a4vx6/giphy.gif?cid=3640f6095c97ae92544d305141562b47">
+                                <h1>Give Up</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer>
+                    <button type="button" class="btn btn-secondary sm-item sm-back-item back-button">Back</button>
+                </footer>
+            </div>
+            <!-- DESIGN -->
+            <div id="design-menu" class="sm-menu container-fluid h-100" data-sm-out="standardOutAnimation" data-sm-in="standardInAnimation">
+                <header>
+                    Design
+                </header>
+                <div class="sm-layout sm-main-layout">
+                    <div class="row d-flex justify-content-center w-100">
+                        <div class="sm-item-container">
+                            <div class="sm-item" data-goto="feature-menu">
+                                <h1>Develop feature</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer>
+                    <button type="button" class="btn btn-secondary back-button sm-item sm-back-item">Back</button>
+                </footer>
+            </div>
+            <!-- FEATURE -->
+            <div id="feature-menu" class="sm-menu container-fluid h-100" data-sm-out="standardOutAnimation" data-sm-in="standardInAnimation">
+                <header>
+                    Feature's development
+                </header>
+                <div class="sm-layout sm-main-layout">
+                    <div class="row d-flex justify-content-center w-100">
+                        <div class="sm-item-container">
+                            <div class="sm-item design-item" data-goto="design-menu">
+                                <h1>Think again about design</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row d-flex justify-content-center w-100">
+                        <div class="sm-item-container">
+                            <div class="sm-item" data-goto="test-menu">
+                                <h1>Test feature</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row d-flex justify-content-center w-100">
+                        <div class="sm-item-container">
+                            <div class="sm-item" data-goto="sub-menu">
+                                <h1>Go to submission</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sm-layout sm-nope-layout">
+                    <div class="row d-flex justify-content-center w-100">
+                        <div class="sm-item-container" data-item="design-item">
+                        </div>
+                    </div>
+                </div>
+                <footer>
+                    <button type="button" class="btn btn-secondary back-button sm-item sm-back-item">Back</button>
+                </footer>
+            </div>
+            <!-- TESTING -->
+            <div id="test-menu" class="sm-menu container-fluid h-100" data-sm-out="standardOutAnimation" data-sm-in="standardInAnimation">
+                <header>
+                    Testing phase
+                </header>
+                <div class="sm-layout sm-main-layout">
+                    <div class="row d-flex justify-content-center w-100">
+                        <div class="sm-item-container">
+                            <div class="sm-item" data-goto="bug-menu">
+                                <h1>It compiles, now run it!</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer>
+                    <button type="button" class="btn btn-secondary back-button sm-item sm-back-item">Back</button>
+                </footer>
+            </div>
+            <!-- BUG -->
+            <div id="bug-menu" class="sm-menu container-fluid h-100" data-sm-out="standardOutAnimation" data-sm-in="standardInAnimation">
+                <header>
+                    BUG
+                </header>
+                <div class="sm-layout sm-main-layout">
+                    <div class="row d-flex justify-content-center w-100">
+                        <div class="sm-item-container">
+                            <div class="sm-item" data-goto="feature-menu">
+                                <h1>NOPE! Try again!</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sm-layout sm-right-layout">
+                    <div class="row d-flex justify-content-center w-100">
+                        <div class="sm-item-container">
+                            <div class="sm-item" data-goto="sub-menu">
+                                <h1>Ok, seems good. Let's go for sub!</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- SUBMISSION -->
+            <div id="sub-menu" class="sm-menu container-fluid h-100" data-sm-out="standardOutAnimation" data-sm-in="standardInAnimation">
+                <header>
+                    Submission
+                </header>
+                <div class="sm-layout sm-main-layout">
+                    <div class="row d-flex justify-content-center w-100">
+                        <div class="sm-item-container">
+                            <div class="sm-item sm-back-item" data-goto="feature-menu">
+                                <h1>BUGS! BUGS EVERYWHERE!</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sm-layout sm-nope-layout">
+                    <div class="row d-flex justify-content-center w-100">
+                        <div class="sm-item-container">
+                            <div class="sm-item sm-back-item" data-goto="sm-main-menu">
+                                <h1>Are you serious? Do you aspect even a candy for it?</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
