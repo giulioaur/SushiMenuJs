@@ -22,7 +22,6 @@ CONST: {
     currentLayoutClass: 'sm-current-layout',
     layoutItemData: 'item',
     gotoData: 'goto',
-    backData: 'back',
     inAnimData: 'smIn',
     outAnimData: 'smOut'
 },

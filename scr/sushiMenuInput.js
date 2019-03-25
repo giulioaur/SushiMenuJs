@@ -10,12 +10,12 @@ SM.CONST.inputDeactivationEvent = 'sm-deactivate';
 SM.CONST.noInputClass = 'sm-no-input';
 
 SM.CONST.inputData = [
-        /* Back */ { events: [66, 27], callback: '_goBack' },
-        /* Select */ { events: [13], callback: '_select' },
-        /* Down */ { events: [83, 40], callback: '_goDown' },
-        /* Left */ { events: [65, 37], callback: '_goLeft' },
-        /* Up */ { events: [87, 38], callback: '_goUp' },
-        /* Right */ { events: [68, 39], callback: '_goRight' }
+        /* Back */ { events: [], callback: '_goBack' },
+        /* Select */ { events: [], callback: '_select' },
+        /* Down */ { events: [], callback: '_goDown' },
+        /* Left */ { events: [], callback: '_goLeft' },
+        /* Up */ { events: [], callback: '_goUp' },
+        /* Right */ { events: [], callback: '_goRight' }
 ]
 
 
@@ -130,11 +130,11 @@ SM.input = {
      * Set the focus on the index-th item of the menu.
      * 
      * @param {HTMLElement} menu The menu in which restore the focus. If null is passed, current menu is used instead.
-     * @param {Number} index The item on which set the focus.
-     * @param {Boolean} isMouseTrigger True if the action has been fired by a mouse event.
-     * @param {string} dir The direction of the movement.
+     * @param {Number} [index=0] The item on which set the focus.
+     * @param {Boolean} [isMouseTrigger=false] True if the action has been fired by a mouse event.
+     * @param {string} [dir="firstFocus"] The direction of the movement.
      */
-    setFocusOn(menu, index, isMouseTrigger = false, dir = 'first') {
+    setFocusOn(menu, index = 0, isMouseTrigger = false, dir = 'firstFocus') {
         if (!menu) menu = this._graph._current;
 
         const items = menu.getElementsByClassName(SM.CONST.itemClass);
@@ -172,9 +172,8 @@ SM.input = {
      * 
      * @param {HTMLElement} menu The menu in which restore the focus. If null is passed, current menu is used instead.
      * @param {Boolean} isMouseTrigger True if the action has been fired by a mouse event.
-     * @param {string} dir The direction of the movement.
      */
-    restoreFocus(menu, isMouseTrigger = false, dir = 'restoreFocus') {
+    restoreFocus(menu, isMouseTrigger = false) {
         if (!menu)      menu = this._graph._current;
 
         const itemToRestore = menu.querySelector(`.${SM.CONST.lastActiveItemClass}`);
@@ -182,10 +181,10 @@ SM.input = {
         // Remove last item class.
         if (itemToRestore) {
             itemToRestore.classList.remove(SM.CONST.lastActiveItemClass);
-            this._changeActive(itemToRestore, isMouseTrigger, dir);
+            this._changeActive(itemToRestore, isMouseTrigger, 'restoreFocus');
         }
         else {
-            this.setFocusOn(menu, 0, isMouseTrigger, dir);
+            this.setFocusOn(menu, 0, isMouseTrigger, 'restoreFocus');
         }
     },
 

@@ -149,4 +149,41 @@ Obliviously there are a lot of things that can be equivalently done both in data
 
 ## SushiMenuInput
 
+To offer a game-like experience, together with SushiMenuJs it comes a library extension that allows the user to navigate the menu also with the keyboard. Is indeed sufficient to include the **“SushiMenuInput.js”** file and recall the initialization function with the instance of the graph to which bind the input and a map of the desired input key and it’s done. \
+Actually the list of possible actions is:
+- Directional movement (up, down, left, right).
+- Trigger the click action on current item (confirm).
+- Go back to the previous menu (back).
+
+When navigating, the library automatically computes the next items in the current direction. \
+**NB:** The navigation is done only within the items of the same layout, so if an item is outside the layout tab, it is not considered.
+
+``` html
+<script src="scr/sushiMenu.js"></script>
+<script src="scr/sushiMenuInput.js"></script>
+<script>
+    SM.input.bindInput(menuGraph, {
+        back: [27],         // Esc
+        select: [13],       // Enter
+        down: [83, 40],     // S, DownArrow
+        left: [65, 37],     // A, LeftArrow
+        up: [87, 38],       // W, UpArrow
+        right: [68, 39],    // D, RightArrow
+    });
+</script>
+```
+
+To allow the user extra customization during navigation, the input library adds two classes and two events. \
+\
+The **“sm-active”** class is assigned to the current active item. If no item is active when a navigation key is pressed, the first menu’s item is activated. An item can also be activated / deactivated through the hovering of the mouse. If an item has **“sm-no-input”** class it is not considered a valid item for the purpose of navigation.\
+\
+The **“sm-activate”** event is called every time an item becomes the current active item, while **“sm-deactivate”** event is called when it stops to be the active one. The Event object passed as parameter uses the detail attribute to pass the following data around:
+- target: The item targeted by the event.
+- other: For activate event, the previous active item, for deactivate event the new item. Can be null.
+- isMouseTrigger: If the event is triggered by the mouse.
+- direction: Can be "up", "down", "left" or "right" in case of keyboard's navigation, "restoreFocus", "firstFocus" or a custom value for focus event.
+
+
+### Focus
+
 
