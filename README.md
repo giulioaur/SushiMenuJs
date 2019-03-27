@@ -112,7 +112,7 @@ const graph = new SM.Graph(options);
 
 The options are:
 - {Boolean} [options.shouldSave = true] True if the menu state should be saved as session's state.
-- {layoutGetter} [options.layoutMap] The function that returns the correct layout to use. Default always uses 'main' as layout.
+- {layoutGetter} [options.layoutMap] The function that returns the correct layout to use. Default always uses 'main' as layout. This function is used to re-compute the correct layout every time the **sm-viewport** element or any of its descendant are modified.
 - {Boolean} [options.logError = true] True if errors must be logged on console, false otherwise. Usually set to true only in development.
 - {Boolean} [options.playFirstAnimation = true] True if enter animation should be played on first menu shown.
 
