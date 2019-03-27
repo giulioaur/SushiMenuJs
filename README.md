@@ -7,7 +7,8 @@ The library has no external dependecies.
 
 ## Getting Started
 
-SushiMenuJs allows to easily define a menu static structure through html tags and attributes. Once the structure has been defined, it parse the html to build a menu's graph, that can be navigated through links between menu.
+SushiMenuJs allows to easily define a menu static structure through html tags and attributes. Once the structure has been defined, it parse the html to build a menu's graph, that can be navigated through links between menu. \
+Every function is fully documented with JSDoc within the sources.
 
 ### Menu
 
@@ -105,7 +106,7 @@ Sometimes can be useful to have the same items appear in more than one layout, w
 The only necessary Javascript code is the one that builds the graph. \
 **NB:** This code must be called once all the html tree is built.
 
-``` javascript
+``` js
 const graph = new SM.Graph(options);
 ``` 
 
@@ -137,7 +138,7 @@ By default, the out-animation set the display property to none, while the in-ani
 Sometimes can be useful to make the very same operation before or after a menu transition. With the **SM.Graph.addDataCallback(callback, beforeAnimation)** method is possible to add a function that is called every time a transition is starting (beforeAnimation = true) or once it is ended (beforeAnimation = false). While the functions called after the transition don’t need to return anything, the ones called before must return true to allow the transition to be triggered or false to block it.
 Both the functions accept as arguments the current menu and the next one.
 
-``` javascript
+``` js
 graph.addDataCallback((current, next) => {
     if ((current.id == "donkey" || next.id == "donkey") && isWoddenBridgeOnLava)
         return false;
@@ -181,9 +182,44 @@ The **“sm-activate”** event is called every time an item becomes the current
 - target: The item targeted by the event.
 - other: For activate event, the previous active item, for deactivate event the new item. Can be null.
 - isMouseTrigger: If the event is triggered by the mouse.
-- direction: Can be "up", "down", "left" or "right" in case of keyboard's navigation, "restoreFocus", "firstFocus" or a custom value for focus event.
-
+- direction: Can be "up", "down", "left" or "right" in case of keyboard's navigation, "restoreFocus", "firstFocus", "leaveMenu" or a custom value for focus event.
+The event of deactivation is called on any active items when leaving the menu.
 
 ### Focus
 
+Working with UI in games, I have learnt how important is the focus during navigation of menu, for this reason the library exposes three functions that allow to control the focus.
 
+- setFocusOn(menu, element, isMouseTrigger, dir) that sets the focus to the element parameter if it is an HTMLElement, otherwise it tries to parse the element as integer and take the i-st element. All parameters are optional.
+- saveFocus(menu, item) that saves the current item as the last one. The focus is cleaned during the data callback after the animations, so this method must be called before that moment. 
+- restoreFocus(menu, isMouseTrigger) that restores the focus on the last element if any was saved exiting the restored menu, otherwise it set the focus to the first element.
+
+``` html
+<script>
+    function onLeavingHighestRoom(from, to) {
+        from.style.display = 'none';
+        
+        SM.input.saveFocus();
+    }
+
+    function onEnteringHighestRoom(from, to) {
+        to.style.display = '';
+
+        SM.input.restoreFocus();
+    }
+</script>
+<div id="sm-viewport">
+    <div id="highest-room" class="sm-menu">
+        <div class="sm-layout sm-main-layout">
+            <div class="sm-item-container">
+                <div class="princess">
+                    <h1>Fiona</h1>
+                </div>
+            </div>
+            <div class="sm-item-container">
+                <div class="wolf">
+                    <h1>Wolf</h1>
+                </div>
+            </div>
+        </div>
+</div>
+``` 

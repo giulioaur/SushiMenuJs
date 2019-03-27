@@ -117,7 +117,7 @@ SM.input = {
         const items = menu.getElementsByClassName(SM.CONST.activeItemClass);
 
         for (let item of items) {
-            this._changeEventDetails(this._deactivationEvent, item, null, false, 'last');
+            this._changeEventDetails(this._deactivationEvent, item, null, false, 'leaveMenu');
             item.dispatchEvent(this._deactivationEvent);
 
             if (item == this._activeItem)   this._activeItem = null;
@@ -129,23 +129,23 @@ SM.input = {
     /**
      * Set the focus on the index-th item of the menu.
      * 
-     * @param {HTMLElement} menu The menu in which restore the focus. If null is passed, current menu is used instead.
-     * @param {Number} [index=0] The item on which set the focus.
+     * @param {HTMLElement} [menu] The menu in which restore the focus. If null is passed, current menu is used instead.
+     * @param {Number | HTMLElement} [element=0] The item on which set the focus.
      * @param {Boolean} [isMouseTrigger=false] True if the action has been fired by a mouse event.
      * @param {string} [dir="firstFocus"] The direction of the movement.
      */
-    setFocusOn(menu, index = 0, isMouseTrigger = false, dir = 'firstFocus') {
+    setFocusOn(menu, element = 0, isMouseTrigger = false, dir = 'firstFocus') {
         if (!menu) menu = this._graph._current;
 
-        const items = menu.getElementsByClassName(SM.CONST.itemClass);
+        const item = element instanceof HTMLElement ? element : menu.getElementsByClassName(SM.CONST.itemClass)[parseInt(element)];
 
-        if (items[index]) {
+        if (item) {
             // Clean previous focus.
             const itemToRestore = menu.querySelector(`.${SM.CONST.lastActiveItemClass}`);
             if (itemToRestore) itemToRestore.classList.remove(SM.CONST.lastActiveItemClass);
 
             // Set new focus.
-            this._changeActive(items[0], isMouseTrigger, dir);
+            this._changeActive(item, isMouseTrigger, dir);
         }
     },
 
@@ -154,7 +154,7 @@ SM.input = {
      * NB: This relies on the fact that the order in which registered events are called is consistent with the 
      * DOM 3 standard (first-assigned, first-called).
      *          
-     * @param {HTMLElement} menu The menu in which save the focus. If null is passed, current menu is used instead.
+     * @param {HTMLElement} [menu] The menu in which save the focus. If null is passed, current menu is used instead.
      * @param {HTMLElement} [item=null] The item that has to be the last focuse. If null is passed, first active item is used instead.
      */
     saveFocus(menu, item = null) {
@@ -170,8 +170,8 @@ SM.input = {
     /**
      * Restore the previous focused item.
      * 
-     * @param {HTMLElement} menu The menu in which restore the focus. If null is passed, current menu is used instead.
-     * @param {Boolean} isMouseTrigger True if the action has been fired by a mouse event.
+     * @param {HTMLElement} [menu] The menu in which restore the focus. If null is passed, current menu is used instead.
+     * @param {Boolean} [isMouseTrigger] True if the action has been fired by a mouse event.
      */
     restoreFocus(menu, isMouseTrigger = false) {
         if (!menu)      menu = this._graph._current;
