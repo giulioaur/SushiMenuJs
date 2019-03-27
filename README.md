@@ -1,5 +1,6 @@
 # SushiMenuJs
-When I came up with the idea of making my site resemble a game’s menu, I started to write a library to would have helped me to quickly deal with this: there SushiMenu was born. I wanted my site to be single-page so the library works without the use of hyperlinks. 
+When I came up with the idea of making my site resemble a game’s menu, I started to write a library to would have helped me to quickly deal with this: there SushiMenu was born. I wanted my site to be single-page so the library works without the use of hyperlinks. \
+It has been fully tested on Mozilla and Chrome.
 
 ## Dependencies
 
