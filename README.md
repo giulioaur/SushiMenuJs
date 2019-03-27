@@ -12,7 +12,7 @@ Every function is fully documented with JSDoc within the sources.
 
 ### Menu
 
-A menu is nothing but a html element (a container element like div is preferred) with **class="sm-menu"** and a unique id to be recognized among all other menu. The default menu (the first to be shown) must have **id="sm-main-menu"**. One and only one menu must have this id. All the menu are contained within an element with **"sm-viewport"** id.  
+A menu is nothing but a html element (a container element like div is preferred) with **class="sm-menu"** and a unique id to be recognized among all other menu. The default menu (the first to be shown) must have **id="sm-main-menu"**. One and only one menu must have this id. All the menu are contained within an element with **id="sm-viewport"**.  
 
 ``` html
 <div id="sm-viewport">
