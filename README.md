@@ -1,5 +1,6 @@
 # SushiMenuJs
-When I came up with the idea of making my site resemble a game’s menu, I started to write a library to help me quickly deal with this. I wanted my site to be single-page so the library works without the use of hyperlinks. 
+When I came up with the idea of making my site resemble a game’s menu, I started to write a library to would have helped me to quickly deal with this: there SushiMenu was born. I wanted my site to be single-page so the library works without the use of hyperlinks. \
+It has been fully tested on Mozilla and Chrome.
 
 ## Dependencies
 
@@ -16,7 +17,7 @@ Every function is fully documented with JSDoc within the sources.
 
 ### Menu
 
-A menu is nothing but a html element (a container element like div is preferred) with **class="sm-menu"** and a unique id to be recognized among all other menu. The default menu (the first to be shown) must have **id="sm-main-menu"**. One and only one menu must have this id. All the menu are contained within an element with **"sm-viewport"** id.  
+A menu is nothing but a html element (a container element like div is preferred) with **class="sm-menu"** and a unique id to be recognized among all other menu. The default menu (the first to be shown) must have **id="sm-main-menu"**. One and only one menu must have this id. All the menu are contained within an element with **id="sm-viewport"**.  
 
 ``` html
 <div id="sm-viewport">
@@ -116,7 +117,7 @@ const graph = new SM.Graph(options);
 
 The options are:
 - {Boolean} [options.shouldSave = true] True if the menu state should be saved as session's state.
-- {layoutGetter} [options.layoutMap] The function that returns the correct layout to use. Default always uses 'main' as layout.
+- {layoutGetter} [options.layoutMap] The function that returns the correct layout to use. Default always uses 'main' as layout. This function is used to re-compute the correct layout every time the **sm-viewport** element or any of its descendant are modified.
 - {Boolean} [options.logError = true] True if errors must be logged on console, false otherwise. Usually set to true only in development.
 - {Boolean} [options.playFirstAnimation = true] True if enter animation should be played on first menu shown.
 
