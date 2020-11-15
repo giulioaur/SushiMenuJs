@@ -5,9 +5,13 @@ When I came up with the idea of making my site resemble a game’s menu, I start
 
 The library has no external dependecies.
 
+## Example
+
+Watch my site at giulioaur.com to take a look at how it works, or go to the source code at https://github.com/giulioaur/giulioaur.github.io to see how it is used.
+
 ## Getting Started
 
-SushiMenuJs allows to easily define a menu static structure through html tags and attributes. Once the structure has been defined, it parse the html to build a menu's graph, that can be navigated through links between menu. \
+SushiMenuJs allows you to easily build your website in a single html page, without need to re-load html every time you want to go to a new section, giving room for fancy animations. It defines a menu static structure through html tags and attributes. Once the structure has been defined, it parse the html to build a menu's graph, that can be navigated through links in items. \
 Every function is fully documented with JSDoc within the sources.
 
 ### Menu
@@ -132,6 +136,8 @@ By default, the out-animation set the display property to none, while the in-ani
     <div id="fairy-godmather" class="sm-menu" data-sm-in="bubbleAnimation" data-sm-out="bubbleAnimation"> </div>
 </div>
 ```
+
+The functions can return none or a Promise. If the **data-sm-in** returns a Promise, **data-sm-out** is called just once the Promise has returned. If the latter returns a Promise, the data Data Callbacks after the animations (read below) are called once it has been resolved. 
 
 ### Data callback
 
